@@ -40,6 +40,7 @@ mixin PlayerModel on Model {
       builder: () => VFCAudioHandler(),
       config: AudioServiceConfig(
         androidNotificationChannelName: 'Voices for Christ',
+        //androidStopForegroundOnPause: false,
         //androidEnableQueue: true,
         notificationColor: Color(0xff002D47),
         androidNotificationIcon: 'mipmap/ic_launcher_notification',

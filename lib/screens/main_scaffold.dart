@@ -167,7 +167,7 @@ class _MainScaffoldState extends State<MainScaffold> {
           ),
           padding: EdgeInsets.only(
             //top: 0.0,
-            top: Scaffold.of(context).appBarMaxHeight ?? 80.0, // default supposedly 56
+            top: 75.0,//Scaffold.of(context).appBarMaxHeight ?? 56.0, // default supposedly 56
             left: 15.0,
             right: 15.0
           ),
