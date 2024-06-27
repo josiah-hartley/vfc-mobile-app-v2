@@ -80,7 +80,7 @@ class _QueueDialogState extends State<QueueDialog> {
           created: 0, 
           title: 'Queue', 
           messages: nonNullQueue);
-        int _indexOfCurrentMessage = nonNullQueue.indexWhere((m) => m.id == model.currentlyPlayingMessage?.id) ?? -1;
+        int _indexOfCurrentMessage = nonNullQueue.indexWhere((m) => m.id == model.currentlyPlayingMessage?.id);
         List<Message> _futureQueue = nonNullQueue.length > _indexOfCurrentMessage + 1
           ? nonNullQueue.sublist(_indexOfCurrentMessage + 1)
           : [];

@@ -60,7 +60,7 @@ class _MainScaffoldState extends State<MainScaffold> {
       setState(() {
         _pageRoutes.removeLast();
         // update page header
-        _currentRouteName = _routeNames[_pageRoutes.last] ?? '';
+        _currentRouteName = _routeNames[_pageRoutes.last]; //?? '';
       });
       return Future.value(false);
     }
@@ -167,7 +167,7 @@ class _MainScaffoldState extends State<MainScaffold> {
           ),
           padding: EdgeInsets.only(
             //top: 0.0,
-            top: Scaffold.of(context).appBarMaxHeight ?? 80.0,
+            top: Scaffold.of(context).appBarMaxHeight ?? 80.0, // default supposedly 56
             left: 15.0,
             right: 15.0
           ),

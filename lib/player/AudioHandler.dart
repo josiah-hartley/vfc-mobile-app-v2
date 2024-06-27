@@ -56,7 +56,7 @@ class VFCAudioHandler extends BaseAudioHandler {
     if (currentIndex < 0 || currentIndex >= _queue.length) {
       currentIndex = 0;
     }
-    Duration currentPosition = _player.position ?? Duration(seconds: 0);
+    Duration currentPosition = _player.position;
     if (positionToSeekTo == null || indexToSeekTo == currentIndex) {
       // if no position is specified, or we're staying on the same item, use the current position
       positionToSeekTo = currentPosition;
@@ -66,7 +66,7 @@ class VFCAudioHandler extends BaseAudioHandler {
       if (indexToSeekTo == null) {
         seekTo(position: currentPosition, index: currentIndex);
       } else {
-        seekTo(position: positionToSeekTo ?? Duration(seconds: 0), index: indexToSeekTo);
+        seekTo(position: positionToSeekTo, index: indexToSeekTo);
       }
     } catch (error) {
       print('Error setting audio source: $error');

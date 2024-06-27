@@ -64,7 +64,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
     );
   }
 
-  Widget _emptyPage(void Function()? addNewPlaylist) {
+  /*Widget _emptyPage(void Function()? addNewPlaylist) {
     return Container(
       alignment: Alignment.topCenter,
       padding: EdgeInsets.symmetric(
@@ -108,7 +108,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
         ),
       ),
     );
-  }
+  }*/
 
   Widget _listOfPlaylists({required List<Playlist> playlists, required Function onOpenPlaylist}) {
     return Container(
@@ -178,7 +178,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
     );
   }
 
-  Widget _playlistSelectionBar({required Playlist currentPlaylist, void Function()? addNewPlaylist}) {
+  /*Widget _playlistSelectionBar({required Playlist currentPlaylist, void Function()? addNewPlaylist}) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 12.0),
       child: Row(
@@ -248,7 +248,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
         ],
       ),
     );
-  }
+  }*/
 
   Widget _playlistMessageList() {
     return Expanded(

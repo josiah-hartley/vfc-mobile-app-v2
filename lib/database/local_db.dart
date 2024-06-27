@@ -358,8 +358,8 @@ class MessageDB {
       searchTerm: recommendation?.label ?? '',
       columns: recommendation?.type == 'speaker' ? ['speaker'] : ['taglist'],
       onlyUnplayed: true,
-      start: recommendation?.messages?.length,
-      end: recommendation?.messages == null ? messageCount : recommendation!.messages!.length + (messageCount ?? 0),
+      start: recommendation?.messages.length,
+      end: recommendation?.messages == null ? messageCount : recommendation!.messages.length + (messageCount ?? 0),
     );
   }
 

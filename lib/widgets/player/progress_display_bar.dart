@@ -19,7 +19,7 @@ class ProgressDisplayBar extends StatelessWidget {
             stream: model.currentPositionStream,
             builder: (BuildContext context, AsyncSnapshot<Duration> snapshot) {
               Duration currentPosition = snapshot.data ?? Duration(seconds: 0);
-              Duration totalLength = model.duration ?? Duration(seconds: 0);
+              Duration totalLength = model.duration; //?? Duration(seconds: 0);
               double progress = totalLength.inSeconds > 0 
                 ? currentPosition.inSeconds / totalLength.inSeconds
                 : 0.0;
@@ -31,8 +31,8 @@ class ProgressDisplayBar extends StatelessWidget {
             },
           );
         }
-        double lastPlayedSeconds = message.lastplayedposition.toDouble() ?? 0.0;
-        double totalSeconds = message.durationinseconds.toDouble() ?? 0.0;
+        double lastPlayedSeconds = message.lastplayedposition.toDouble(); //?? 0.0;
+        double totalSeconds = message.durationinseconds.toDouble(); //?? 0.0;
         double progress = totalSeconds > 0 
           ? lastPlayedSeconds / totalSeconds
           : 0.0;

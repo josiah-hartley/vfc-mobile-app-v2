@@ -53,7 +53,7 @@ mixin PlayerModel on Model {
     await loadLastPlaybackSpeed();
 
     _audioHandler?.queue.listen((updatedQueue) async {
-      _queue = updatedQueue?.map((item) => messageFromMediaItem(item)).toList();
+      _queue = updatedQueue.map((item) => messageFromMediaItem(item)).toList();
       notifyListeners();
       if (_queue != null && _queue!.length > 0) {
         Logger.logEvent(event: 'Updating queue in database: $_queue');
@@ -134,7 +134,7 @@ mixin PlayerModel on Model {
         return;
       }
 
-      num _seconds = result.lastplayedposition ?? 0.0;
+      num _seconds = result.lastplayedposition;
       int _milliseconds = (_seconds * 1000).round();
       await setupPlayer(
         message: result, 

@@ -42,7 +42,8 @@ class _SearchResultsDisplayState extends State<SearchResultsDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    if ((widget.searchResults.length ?? 0) < 1) {
+    //if ((widget.searchResults.length ?? 0) < 1) {
+    if ((widget.searchResults.length) < 1) {
       _deselectAll();
     }
     if (widget.hasSearched != true) {

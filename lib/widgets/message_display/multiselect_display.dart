@@ -193,7 +193,7 @@ class MultiSelectDisplay extends StatelessWidget {
         onPressed: () {
           List<Message>? _downloadedMessages = messages?.where((m) => m.isdownloaded == 1).toList();
           if (_downloadedMessages != null
-              && _downloadedMessages.length != null
+              //&& _downloadedMessages.length != null
               && _downloadedMessages.length > 0) {
             String _m = _downloadedMessages.length > 1 ? 'messages' : 'message';
             

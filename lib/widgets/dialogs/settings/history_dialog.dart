@@ -110,7 +110,7 @@ class _HistoryDialogState extends State<HistoryDialog> {
                       }
 
                       Message message = _recentMessages[index];
-                      DateTime d = DateTime.fromMillisecondsSinceEpoch(message.lastplayeddate ?? 0);
+                      DateTime d = DateTime.fromMillisecondsSinceEpoch(message.lastplayeddate);
                       int hour = d.hour > 12 ? d.hour - 12 : d.hour;
                       // change 0 hour to 12 am
                       if (hour == 0) { hour = 12; }

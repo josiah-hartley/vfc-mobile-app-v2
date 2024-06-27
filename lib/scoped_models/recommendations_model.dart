@@ -22,10 +22,12 @@ mixin RecommendationsModel on Model {
       messageCount: 10,
     );
     _recommendations = [];
-    if (_featured.messages != null && _featured.messages!.length > 0) {
+    //if (_featured.messages != null && _featured.messages!.length > 0) {
+    if (_featured.messages.length > 0) {
       _recommendations.add(_featured);
     }
-    if (_downloads.messages != null && _downloads.messages!.length > 0) {
+    //if (_downloads.messages != null && _downloads.messages!.length > 0) {
+    if (_downloads.messages.length > 0) {
       _recommendations.add(_downloads);
     }
     _recommendations.addAll(_otherRecommendations);
@@ -40,7 +42,7 @@ mixin RecommendationsModel on Model {
       recommendation: _recommendations[rIndex],
       messageCount: messageCount,
     );
-    _recommendations[rIndex].messages?.addAll(result);
+    _recommendations[rIndex].messages.addAll(result);
     notifyListeners();
   }
 

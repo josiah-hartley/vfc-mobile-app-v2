@@ -168,7 +168,7 @@ class _AddToPlaylistDialogState extends State<AddToPlaylistDialog> {
             Container(
               width: MediaQuery.of(context).size.width - 120.0,
               padding: EdgeInsets.only(left: 20.0),
-              child: Text(playlist.title ?? '',
+              child: Text(playlist.title,
                 style: TextStyle(
                   color: Theme.of(context).hintColor,
                   fontSize: 20.0,
@@ -205,7 +205,7 @@ class _AddToPlaylistDialogState extends State<AddToPlaylistDialog> {
             Container(
               width: MediaQuery.of(context).size.width - 120.0,
               padding: EdgeInsets.only(left: 20.0),
-              child: Text(playlist.title ?? '',
+              child: Text(playlist.title,
                 style: TextStyle(
                   color: Theme.of(context).hintColor,
                   fontSize: 20.0,

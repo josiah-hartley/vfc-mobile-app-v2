@@ -20,8 +20,8 @@ class _SeekBarState extends State<SeekBar> {
 
   @override
   Widget build(BuildContext context) {
-    final position = widget.position.inSeconds ?? 0;
-    final duration = widget.duration.inSeconds ?? 0;
+    final position = widget.position.inSeconds;
+    final duration = widget.duration.inSeconds;
     final value = min(_dragValue ?? (position.toDouble()), duration.toDouble());
     if (!_dragging) {
       _dragValue = null;

@@ -83,7 +83,7 @@ class _EditPlaylistTitleDialogState extends State<EditPlaylistTitleDialog> {
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
       child: TextFormField(
-        initialValue: widget.playlist.title ?? '',
+        initialValue: widget.playlist.title,
         style: TextStyle(
           color: Theme.of(context).hintColor,
           fontSize: 18.0,

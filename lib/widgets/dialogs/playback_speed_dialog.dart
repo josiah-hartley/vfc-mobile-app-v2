@@ -28,7 +28,7 @@ class _PlaybackSpeedDialogState extends State<PlaybackSpeedDialog> {
     super.initState();
     setState(() {
       _speed = widget.initialSpeed;
-      _speedIndex = _availableSpeeds.indexOf(_speed) ?? 0;
+      _speedIndex = _availableSpeeds.indexOf(_speed);
       if (_speedIndex < 0) {
         _speedIndex = 0;
       }
@@ -79,7 +79,7 @@ class _PlaybackSpeedDialogState extends State<PlaybackSpeedDialog> {
     if (closestSpeed != _speed) {
       setState(() {
         _speed = closestSpeed;
-        _speedIndex = _availableSpeeds.indexOf(_speed) ?? 0;
+        _speedIndex = _availableSpeeds.indexOf(_speed);
       });
     }
   }
