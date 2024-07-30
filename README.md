@@ -99,8 +99,9 @@ This database has 7 tables:
 
 ## Deploying Updates to Android ([link to instructions](https://docs.flutter.dev/deployment/android))
 1. Update version number in `pubspec.yaml` and `helpers/constants.dart`
-2. Run `flutter build appbundle`
-3. Upload resulting file to Google Play Console
+2. (if needed) Update `minSdk` and `targetSdk` versions in `android/local.properties`
+3. Run `flutter build appbundle`
+4. Upload resulting file to Google Play Console
 
 ## Deploying Updates to iOS ([link to instructions](https://docs.flutter.dev/deployment/ios))
 1. Update version number in `pubspec.yaml` and `helpers/constants.dart`

@@ -43,7 +43,6 @@ Future<List<Message>> queryMultipleMessages({Database? db, List<int>? ids}) asyn
         WHERE id IN ($idList)
         ORDER BY instr('$idList', ',' || id || ',')
     ''');
-    print('RESULT IS ${result}');
     
     if (result.isNotEmpty) {
       return result.map((msgMap) => Message.fromMap(msgMap)).toList();

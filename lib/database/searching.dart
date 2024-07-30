@@ -2,38 +2,6 @@ import 'package:sqflite/sqflite.dart';
 import 'package:voices_for_christ/data_models/message_class.dart';
 import 'package:voices_for_christ/database/table_names.dart';
 
-Future<void> createVirtualTable({required Database db}) async {
-  String query = 'CREATE VIRTUAL TABLE movies USING FTS5(title, overview, year UNINDEXED)';
-  try {
-    await db.rawQuery(query);
-  } catch (error) {
-    print('Error adding virtual table to SQLite database: $error');
-  }
-
-  String insertQuery = "INSERT INTO movies ('title', 'overview', 'poster', 'year') VALUES ('Pulp Fiction', 'A burger-loving hit man...', '1994')";
-  try {
-    await db.rawQuery(insertQuery);
-  } catch (error) {
-    print('Error inserting movie to SQLite database: $error');
-  }
-}
-
-Future<List<Map>> fullTextSearch({required Database db, String? searchTerm}) async {
-  String query = "SELECT * FROM movies WHERE movies MATCH 'pulp'";
-  try {
-    var result = await db.rawQuery(query);
-
-    if (result.isNotEmpty) {
-      print(result);
-      return result;
-    }
-    return [];
-  } catch (error) {
-    print('Error full-text searching SQLite database: $error');
-    return [];
-  }
-}
-
 List<String> searchArguments(String searchTerm) {
   List<String> searchWords = searchTerm.split(' ').where((w) => w.length > 1).toList();
   return (searchWords.map((w) => '%' + w + '%')).toList();

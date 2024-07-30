@@ -13,6 +13,7 @@ import 'package:voices_for_christ/database/metadata.dart' as meta;
 import 'package:voices_for_christ/database/messages.dart' as messages;
 import 'package:voices_for_christ/database/favorites.dart' as favorites;
 import 'package:voices_for_christ/database/downloads.dart' as downloadsMethods;
+import 'package:voices_for_christ/database/speakers.dart' as speakers;
 import 'package:voices_for_christ/database/searching.dart' as search;
 import 'package:voices_for_christ/database/playlists.dart' as playlists;
 import 'package:voices_for_christ/database/recommendations.dart' as recommendations;
@@ -210,22 +211,16 @@ class MessageDB {
     await downloadsMethods.removeMessagesFromDownloadQueueDB(db, messages);
   }
 
+  // SPEAKERS
+  Future<int> getSpeakerMessageCount({String speakerName = ''}) async {
+    Database db = await instance.database;
+    return await speakers.getSpeakerMessageCount(
+      db: db,
+      speakerName: speakerName,
+    );
+  }
+
   // SEARCHING
-  Future<void> createVirtualTable() async {
-    Database db = await instance.database;
-    return await search.createVirtualTable(
-      db: db,
-    );
-  }
-
-  Future<List<Map>> fullTextSearch({String searchTerm = ''}) async {
-    Database db = await instance.database;
-    return await search.fullTextSearch(
-      db: db,
-      searchTerm: searchTerm,
-    );
-  }
-
   Future<int> searchCountSpeakerTitle({String searchTerm = '', bool mustContainAll = true}) async {
     Database db = await instance.database;
     return await search.searchCountSpeakerTitle(
@@ -387,6 +382,8 @@ class MessageDB {
     await db.execute('DROP TABLE IF EXISTS $messagesInPlaylist');
     await db.execute('DROP TABLE IF EXISTS $downloads');
     await db.execute('DROP TABLE IF EXISTS $metaTable');
+    await db.execute('DROP TABLE IF EXISTS $recommendationsTable');
+    await db.execute('DROP TABLE IF EXISTS $loggingTable');
     await onCreateDB(db, 1);
 
     // reset date of last update from cloud database

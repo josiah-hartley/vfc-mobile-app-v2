@@ -12,9 +12,10 @@ import 'package:voices_for_christ/widgets/search/search_results.dart';
 import 'package:voices_for_christ/helpers/logger.dart' as Logger;
 
 class SearchWindow extends StatefulWidget {
-  SearchWindow({Key? key, this.focusNode, this.closeWindow}) : super(key: key);
+  SearchWindow({Key? key, this.focusNode, required this.closeWindow/*, required this.navigateToSpeakerPage*/}) : super(key: key);
   final FocusNode? focusNode;
-  final void Function()? closeWindow;
+  final void Function() closeWindow;
+  //final void Function() navigateToSpeakerPage;
 
   @override
   _SearchWindowState createState() => _SearchWindowState();
@@ -95,18 +96,12 @@ class _SearchWindowState extends State<SearchWindow> {
               });
             }
           ),
-          Container(
+          /*Container(
             child: TextButton(
-              onPressed: db.createVirtualTable,
-              child: Text('Create Virtual Table'),
+              onPressed: widget.navigateToSpeakerPage,
+              child: Text('Go to speaker page'),
             ),
-          ),
-          Container(
-            child: TextButton(
-              onPressed: () => db.fullTextSearch(searchTerm: ''),
-              child: Text('Movie Search'),
-            ),
-          ),
+          ),*/
           _hasSearched
             ? Container()
             : Expanded(

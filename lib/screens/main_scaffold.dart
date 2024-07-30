@@ -6,6 +6,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:voices_for_christ/helpers/minimize_keyboard.dart';
 import 'package:voices_for_christ/scoped_models/main_model.dart';
 import 'package:voices_for_christ/screens/settings.dart';
+import 'package:voices_for_christ/screens/speakers.dart';
 import 'package:voices_for_christ/widgets/player/player_panel_collapsed.dart';
 import 'package:voices_for_christ/widgets/player/player_panel_expanded.dart';
 import 'package:voices_for_christ/screens/search.dart';
@@ -23,7 +24,7 @@ class MainScaffold extends StatefulWidget {
 
 class _MainScaffoldState extends State<MainScaffold> {
   final _navigatorKey = GlobalKey<NavigatorState>();
-  List<String> _routeNames = ['Home', 'Downloads', 'Playlists', 'Favorites'];
+  List<String> _routeNames = ['Home', 'Downloads', 'Playlists', 'Favorites'];//, 'Speakers'];
   List<int> _pageRoutes = [0];
   String _currentRouteName = 'Home';
   bool _searchWindowOpen = false;
@@ -41,6 +42,38 @@ class _MainScaffoldState extends State<MainScaffold> {
   void dispose() { 
     _searchFocusNode?.dispose();
     super.dispose();
+  }
+
+  void _navigateToPage(int index) {
+    // if already on this page, don't navigate
+    if (index == _pageRoutes.last) {
+      return;
+    }
+
+    switch (index) {
+      case 0:
+        _navigatorKey.currentState?.pushNamed('/');
+        break;
+      case 1:
+        _navigatorKey.currentState?.pushNamed('/downloads');
+        break;
+      case 2:
+        _navigatorKey.currentState?.pushNamed('/playlists');
+        break;
+      case 3:
+        _navigatorKey.currentState?.pushNamed('/favorites');
+        break;
+      //case 4:
+      //  _navigatorKey.currentState?.pushNamed('/speakers');
+      //  break;
+      default:
+        _navigatorKey.currentState?.pushNamed('/');
+    }
+
+    setState(() {
+      _pageRoutes.add(index);
+      _currentRouteName = _routeNames[index];
+    });
   }
 
   Future<bool> _handleBackButton() {
@@ -80,6 +113,13 @@ class _MainScaffoldState extends State<MainScaffold> {
     });
     minimizeKeyboard(context);
   }
+
+  /*void _navigateToSpeakerPage() {
+    // move to Speakers tab
+    _navigateToPage(4);
+    // close search panel
+    _closeSearchDrawer();
+  }*/
 
   PreferredSizeWidget _appBar(void Function()? _openSearchDrawer) {
     return AppBar(
@@ -167,7 +207,7 @@ class _MainScaffoldState extends State<MainScaffold> {
           ),
           padding: EdgeInsets.only(
             //top: 0.0,
-            top: 75.0,//Scaffold.of(context).appBarMaxHeight ?? 56.0, // default supposedly 56
+            top: Scaffold.of(context).appBarMaxHeight ?? 75.0, // default supposedly 56
             left: 15.0,
             right: 15.0
           ),
@@ -217,31 +257,19 @@ class _MainScaffoldState extends State<MainScaffold> {
           icon: Icon(CupertinoIcons.star_fill, size: 20.0),
           label: 'Favorites',
         ),
+        /*BottomNavigationBarItem(
+          //icon: Icon(Icons.group, size: 28.0),
+          //icon: Icon(CupertinoIcons.music_mic, size: 28.0),
+          //icon: Icon(Icons.recent_actors, size: 28.0),
+          //icon: Icon(Icons.spatial_audio_off, size: 28.0),
+          //icon: Icon(Icons.people, size: 28.0),
+          icon: Icon(Icons.record_voice_over, size: 26.0),
+          label: 'Speakers',
+        ),*/
       ],
+      //currentIndex: _pageRoutes.last < 5 ? _pageRoutes.last : 0,
       currentIndex: _pageRoutes.last < 4 ? _pageRoutes.last : 0,
-      onTap: (index) {
-        switch (index) {
-          case 0:
-            _navigatorKey.currentState?.pushNamed('/');
-            break;
-          case 1:
-            _navigatorKey.currentState?.pushNamed('/downloads');
-            break;
-          case 2:
-            _navigatorKey.currentState?.pushNamed('/playlists');
-            break;
-          case 3:
-            _navigatorKey.currentState?.pushNamed('/favorites');
-            break;
-          default:
-            _navigatorKey.currentState?.pushNamed('/');
-        }
-
-        setState(() {
-          _pageRoutes.add(index);
-          _currentRouteName = _routeNames[index];
-        });
-      },
+      onTap: _navigateToPage,
       type: BottomNavigationBarType.fixed,
       showUnselectedLabels: false,
     );
@@ -258,6 +286,7 @@ class _MainScaffoldState extends State<MainScaffold> {
         body: SearchWindow(
           focusNode: _searchFocusNode,
           closeWindow: _closeSearchDrawer,
+          //navigateToSpeakerPage: _navigateToSpeakerPage,
         ),
       ),
     );
@@ -294,6 +323,9 @@ class _MainScaffoldState extends State<MainScaffold> {
       case '/downloads':
         page = DownloadsPage();
         break;
+      /*case '/speakers':
+        page = SpeakersPage();
+        break;*/
       default:
         page = HomePage();
     }
