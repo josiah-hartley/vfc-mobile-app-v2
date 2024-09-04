@@ -24,7 +24,7 @@ class HomePage extends StatelessWidget {
               padding: EdgeInsets.only(top: 0.0, bottom: 250.0),
               shrinkWrap: true,
               itemCount: model.recommendations.length + 1,
-              itemBuilder: (context, index) {
+              itemBuilder: (ctx, index) {
                 if (index == 0) {
                   return Container(
                     padding: EdgeInsets.only(top: 12.0, left: 14.0),
@@ -122,10 +122,10 @@ class HomePage extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 4.0),
-        child: Card(
-          //color: Theme.of(context).cardColor,
+        child: Container(
+          color: Theme.of(context).cardColor,
           margin: EdgeInsets.only(right: 14.0),
-          elevation: 0.5,
+          //elevation: 0.5,
           child: Container(
             decoration: BoxDecoration(
               /*gradient: LinearGradient(
@@ -138,9 +138,9 @@ class HomePage extends StatelessWidget {
               ),*/
               border: Border.all(
                 color: Theme.of(context).hintColor.withOpacity(0.3),
-                width: 0.5,
+                width: 2,
               ),
-              color: Theme.of(context).hintColor.withOpacity(0.01),
+              color: Theme.of(context).hintColor.withOpacity(0.05),//Theme.of(context).hintColor.withOpacity(0.05),
             ),
             padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
             width: min(MediaQuery.of(context).size.width * 0.7, Constants.MAX_RECOMMENDATION_WIDTH),

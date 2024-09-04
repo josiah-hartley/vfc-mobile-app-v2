@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:voices_for_christ/helpers/constants.dart' as Constants;
 import 'package:scoped_model/scoped_model.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -125,6 +126,9 @@ class _MainScaffoldState extends State<MainScaffold> {
     return AppBar(
       title: Text(_currentRouteName.toUpperCase(),
         style: Theme.of(context).appBarTheme.titleTextStyle,
+      ),
+      systemOverlayStyle: SystemUiOverlayStyle(
+        statusBarColor: Color(0xff002D47),
       ),
       actions: [
         IconButton(

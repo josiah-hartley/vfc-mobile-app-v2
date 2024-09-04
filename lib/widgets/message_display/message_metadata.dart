@@ -96,13 +96,13 @@ Map<String, Color> initialStickerColors(String initials) {
   double hue;
   double lightness;
   int firstIndex = alphabet.indexOf(initials[0].toUpperCase());
-  int secondIndex = alphabet.indexOf(initials[1].toUpperCase());
   Color textColor;
 
   if (initials.length != 2) {
     hue = (firstIndex * 138.0) % 360;
     lightness = 0.4;
   } else {
+    int secondIndex = alphabet.indexOf(initials[1].toUpperCase());
     hue = (secondIndex * 138.0) % 360;
     lightness = firstIndex * 0.015 + 0.4;
   }
