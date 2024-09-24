@@ -31,17 +31,20 @@ class _MainScaffoldState extends State<MainScaffold> {
   bool _searchWindowOpen = false;
   final PanelController _playerPanelController = PanelController();
   bool _playerPanelOpen = false;
-  FocusNode? _searchFocusNode;
+  FocusNode? _searchFocusNodeTopic;
+  FocusNode? _searchFocusNodeSpeaker;
 
   @override
   void initState() { 
     super.initState();
-    _searchFocusNode = FocusNode();
+    _searchFocusNodeTopic = FocusNode();
+    _searchFocusNodeSpeaker = FocusNode();
   }
 
   @override
   void dispose() { 
-    _searchFocusNode?.dispose();
+    _searchFocusNodeTopic?.dispose();
+    _searchFocusNodeSpeaker?.dispose();
     super.dispose();
   }
 
@@ -288,7 +291,8 @@ class _MainScaffoldState extends State<MainScaffold> {
       left: _searchWindowOpen ? 0.0 : MediaQuery.of(context).size.width,
       child: Scaffold(
         body: SearchWindow(
-          focusNode: _searchFocusNode,
+          focusNodeTopic: _searchFocusNodeTopic,
+          focusNodeSpeaker: _searchFocusNodeSpeaker,
           closeWindow: _closeSearchDrawer,
           //navigateToSpeakerPage: _navigateToSpeakerPage,
         ),

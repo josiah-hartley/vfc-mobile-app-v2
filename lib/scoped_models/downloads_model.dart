@@ -423,7 +423,7 @@ mixin DownloadsModel on Model {
         messages[i].filepath = '';
         removeMessageFromDownloadedList(messages[i]);
       }
-      await db.batchAddToDB(messages);
+      await db.batchAddToDB(messageList: messages);
       _downloadedBytes -= totalStorage;
       await db.updateStorageUsed(
         bytes: totalStorage,
@@ -446,7 +446,7 @@ mixin DownloadsModel on Model {
     }
   }
 
-  Future<void> checkConnection({bool showPopup = true}) async {
+  Future<void> checkConnection({bool showPopup = false}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool downloadOverData = prefs.getBool('downloadOverData') ?? false;
 
@@ -465,7 +465,7 @@ mixin DownloadsModel on Model {
         _downloadsPaused = true;
         _downloadPauseReason = PauseReason.connectionType;
         if (showPopup) {
-          showToast('Can only download over WiFi; check settings (added to download queue)');
+          showToast('Can only download over WiFi; check settings');
         }
         notifyListeners();
       } 

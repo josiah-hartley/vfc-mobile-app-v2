@@ -135,13 +135,29 @@ class SettingsPage extends StatelessWidget {
               ],
             ),
           ),
-          Container(
+          /*Container(
             child: Switch(
               value: value,
               onChanged: (val) { toggle(); },
               activeColor: Theme.of(context).hintColor,
               inactiveThumbColor: Theme.of(context).hintColor.withOpacity(0.8),
               inactiveTrackColor: Theme.of(context).hintColor.withOpacity(0.25),
+            ),
+          ),*/
+          Container(
+            child: GestureDetector(
+              child: Container(
+                child: value == true
+                      ? Icon(CupertinoIcons.checkmark_square_fill,
+                          size: 32.0,
+                          color: Theme.of(context).hintColor,
+                        )
+                      : Icon(CupertinoIcons.square,
+                          size: 32.0,
+                          color: Theme.of(context).hintColor,
+                        ),
+              ),
+              onTap: () { toggle(); },
             ),
           ),
         ],
@@ -227,30 +243,33 @@ class SettingsPage extends StatelessWidget {
   Widget _checkForUpdates({required BuildContext context, required int lastUpdated}) {
     DateTime d = DateTime.fromMillisecondsSinceEpoch(lastUpdated);
     String lastUpdatedReadable = '${d.month}/${d.day}/${d.year}';
-    return GestureDetector(
+    /*return GestureDetector(
       onTap: () {
         showDialog(
           context: context,
           builder: (context) => CheckDatabaseUpdatesDialog(lastUpdated: d),
         );
       },
-      child: Container(
-        color: Theme.of(context).canvasColor.withOpacity(0.01),
-        padding: EdgeInsets.symmetric(vertical: 12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Check for new messages',
+      child: Container(),
+    );*/
+    return Container(
+      color: Theme.of(context).canvasColor.withOpacity(0.01),
+      padding: EdgeInsets.only(top: 12.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Text('Latest database update',
               style: Theme.of(context).primaryTextTheme.displayMedium,
             ),
-            Container(
-              padding: EdgeInsets.only(top: 5.0, right: 25.0),
-              child: Text('Last updated on $lastUpdatedReadable',
-                style: Theme.of(context).primaryTextTheme.headlineMedium,
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
+              child: Text(lastUpdatedReadable,
+                style: Theme.of(context).primaryTextTheme.displayMedium,
               ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

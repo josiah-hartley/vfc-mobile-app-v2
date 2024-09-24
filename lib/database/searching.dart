@@ -2,8 +2,28 @@ import 'package:sqflite/sqflite.dart';
 import 'package:voices_for_christ/data_models/message_class.dart';
 import 'package:voices_for_christ/database/table_names.dart';
 
+bool searchTermInQuotes(String searchTerm) {
+  if (searchTerm.length < 1) {
+    return false;
+  }
+  if ((searchTerm[0] == '"' || searchTerm[0] == "'") 
+        && (searchTerm[searchTerm.length - 1] == '"' || searchTerm[searchTerm.length - 1] == "'")) {
+    return true;
+  }
+  return false;
+}
+
 List<String> searchArguments(String searchTerm) {
-  List<String> searchWords = searchTerm.split(' ').where((w) => w.length > 1).toList();
+  //List<String> searchWords = searchTerm.split(' ').where((w) => w.length > 1).toList();
+  List<String> searchWords = [];
+  if (searchTerm.length < 1) {
+    return searchWords;
+  }
+  if (searchTermInQuotes(searchTerm)) {
+    searchWords = [searchTerm.replaceAll('"', '').replaceAll("'", '')];
+  } else {
+    searchWords = searchTerm.split(' ').where((w) => w.length >= 1).toList();
+  }
   return (searchWords.map((w) => '%' + w + '%')).toList();
 }
 
@@ -163,6 +183,192 @@ Future<List<Message>> searchByColumns({required Database db, required String sea
     start: start,
     end: end,
   );
+}
+
+String getAdvancedSearchQuery({
+  required List<String> topicSearchWords,  
+  required List<String> speakerSearchWords,
+  bool onlyReturnCount = false,
+  bool onlyUnplayed = false, 
+  bool mustContainAll = true, 
+  int? start, 
+  int? end,
+  String? language,
+  String? location,
+  int? minLengthInMinutes,
+  int? maxLengthInMinutes,
+  bool onlyFavorites = false,
+  bool onlyDownloaded = false,
+}) {
+  String query = '';
+  if (onlyReturnCount) {
+    query = 'SELECT COUNT(*) from $messageTable WHERE ';
+  } else {
+    query = 'SELECT * from $messageTable WHERE ';
+  }
+
+  if (topicSearchWords.length > 0) {
+    query += '(';
+    query += columnsLike(
+      argList: topicSearchWords,
+      comparisons: ['title'],
+      mustContainAll: mustContainAll
+    );
+    query += ')';
+    if (speakerSearchWords.length > 0) {
+      query += ' AND ';
+    }
+  }
+  if (speakerSearchWords.length > 0) {
+    query += '(';
+    query += columnsLike(
+      argList: speakerSearchWords,
+      comparisons: ['speaker'],
+      mustContainAll: mustContainAll
+    );
+    query += ')';
+  }
+
+  if (onlyUnplayed == true) {
+    query += ' AND isplayed = 0';
+  }
+
+  if (onlyFavorites == true) {
+    query += ' AND isfavorite = 1';
+  }
+
+  if (onlyDownloaded == true) {
+    query += ' AND isdownloaded = 1';
+  }
+
+  if (minLengthInMinutes != null && minLengthInMinutes > 0) {
+    query += ' AND approximateminutes > ' + (minLengthInMinutes - 1).toString();
+  }
+
+  if (maxLengthInMinutes != null && maxLengthInMinutes > 0) {
+    query += ' AND approximateminutes < ' + (maxLengthInMinutes + 1).toString();
+  }
+
+  if (!onlyReturnCount && start != null && end != null) {
+    query += ' LIMIT ${(end - start).toString()} OFFSET ${start.toString()}';
+  }
+
+  return query;
+}
+
+Future<List<Message>> advancedSearch({
+  required Database db,
+  required String topicSearchTerm,  
+  required String speakerSearchTerm,
+  bool onlyUnplayed = false, 
+  bool mustContainAll = true, 
+  int? start, 
+  int? end,
+  String? language,
+  String? location,
+  int? minLengthInMinutes,
+  int? maxLengthInMinutes,
+  bool onlyFavorites = false,
+  bool onlyDownloaded = false}) async {
+    if (topicSearchTerm.length < 2 && speakerSearchTerm.length < 2) {
+      return [];
+    }
+    List<String> topicSearchWords = searchArguments(topicSearchTerm);
+    //print('topicSearchWords are ${topicSearchWords}');
+    
+    List<String> speakerSearchWords = searchArguments(speakerSearchTerm);
+    //print('topicSearchWords are ${topicSearchWords} and speakerSearchWords are ${speakerSearchWords}');
+    
+    if (topicSearchWords.length < 1 && speakerSearchWords.length < 1) {
+      return [];
+    }
+
+    String query = getAdvancedSearchQuery(
+      topicSearchWords: topicSearchWords, 
+      speakerSearchWords: speakerSearchWords,
+      onlyReturnCount: false,
+      onlyUnplayed: onlyUnplayed, 
+      mustContainAll: mustContainAll, 
+      start: start, 
+      end: end,
+      language: language,
+      location: location,
+      minLengthInMinutes: minLengthInMinutes,
+      maxLengthInMinutes: maxLengthInMinutes,
+      onlyFavorites: onlyFavorites,
+      onlyDownloaded: onlyDownloaded);
+
+    List<String> args = topicSearchWords;
+    args.addAll(speakerSearchWords);
+    print('query is ${query} and args are ${args}');
+
+    try {
+      var result = await db.rawQuery(query, args);
+
+      if (result.isNotEmpty) {
+        List<Message> messages = result.map((msgMap) => Message.fromMap(msgMap)).toList();
+        print('Found ${messages.length} messages: ${messages}');
+        return messages;
+      }
+      return [];
+    } catch (error) {
+      print('Error searching SQLite database: $error');
+      return [];
+    }
+}
+
+Future<int> advancedSearchCount({
+  required Database db,
+  required String topicSearchTerm,  
+  required String speakerSearchTerm,
+  bool onlyUnplayed = false, 
+  bool mustContainAll = true, 
+  int? start, 
+  int? end,
+  String? language,
+  String? location,
+  int? minLengthInMinutes,
+  int? maxLengthInMinutes,
+  bool onlyFavorites = false,
+  bool onlyDownloaded = false}) async {
+    if (topicSearchTerm.length < 2 && speakerSearchTerm.length < 2) {
+      return 0;
+    }
+    List<String> topicSearchWords = searchArguments(topicSearchTerm);
+    //print('topicSearchWords are ${topicSearchWords}');
+    
+    List<String> speakerSearchWords = searchArguments(speakerSearchTerm);
+    //print('topicSearchWords are ${topicSearchWords} and speakerSearchWords are ${speakerSearchWords}');
+    
+    if (topicSearchWords.length < 1 && speakerSearchWords.length < 1) {
+      return 0;
+    }
+
+    String query = getAdvancedSearchQuery(
+      topicSearchWords: topicSearchWords, 
+      speakerSearchWords: speakerSearchWords,
+      onlyReturnCount: true,
+      onlyUnplayed: onlyUnplayed, 
+      mustContainAll: mustContainAll, 
+      start: start, 
+      end: end,
+      language: language,
+      location: location,
+      minLengthInMinutes: minLengthInMinutes,
+      maxLengthInMinutes: maxLengthInMinutes,
+      onlyFavorites: onlyFavorites,
+      onlyDownloaded: onlyDownloaded);
+
+    List<String> args = topicSearchWords;
+    args.addAll(speakerSearchWords);
+    print('query is ${query} and args are ${args}');
+
+    try {
+      return Sqflite.firstIntValue(await db.rawQuery(query, args)) ?? 0;
+    } catch (error) {
+      print('Error searching SQLite database: $error');
+      return 0;
+    }
 }
 
 /*Future<List<Message>> searchBySpeaker(String searchTerm, [int start, int end]) async {

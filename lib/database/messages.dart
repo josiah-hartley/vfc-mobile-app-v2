@@ -6,12 +6,14 @@ Future<int> addToDB(Database db, Message msg) async {
   return await db.insert(messageTable, msg.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
 }
 
-Future<void> batchAddToDB(Database db, List<Message> msgList) async {
+Future<void> batchAddToDB({required Database db, required List<Message> msgList, bool replace = true}) async {
+  ConflictAlgorithm conflictAlgo = replace ? ConflictAlgorithm.replace : ConflictAlgorithm.ignore;
+  
   await db.transaction((txn) async {
     Batch batch = txn.batch();
 
     for (Message msg in msgList) {
-      batch.insert(messageTable, msg.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+      batch.insert(messageTable, msg.toMap(), conflictAlgorithm: conflictAlgo);
     }
 
     await batch.commit();

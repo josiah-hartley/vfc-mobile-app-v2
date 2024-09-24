@@ -11,6 +11,7 @@ ThemeData darkTheme = sharedTheme.copyWith(
   primaryColor: Color(0xff002D47),
   hintColor: Colors.white,
   highlightColor: Color(0xfffa7a0a),
+  focusColor: Colors.white,
   canvasColor: Color(0xff002D47),
   cardColor: Color(0xff01466e),
   dialogBackgroundColor: Color(0xff002133),

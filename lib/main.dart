@@ -8,6 +8,7 @@ import 'package:voices_for_christ/scoped_models/main_model.dart';
 import 'package:voices_for_christ/ui/dark_theme.dart';
 import 'package:voices_for_christ/ui/light_theme.dart';
 import 'package:voices_for_christ/screens/main_scaffold.dart';
+import 'package:voices_for_christ/database/cloud_db.dart';
 
 void main() async {
   //WidgetsFlutterBinding.ensureInitialized(); // needed because of async work in initializePlayer()
@@ -40,6 +41,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     doMainSetup();
+    getMessageDataFromCloud();
   }
 
   void updateLoadingMessage(String newMessage) {

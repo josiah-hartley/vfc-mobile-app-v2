@@ -97,9 +97,9 @@ class MessageDB {
     return await messages.addToDB(db, message);
   }
 
-  Future batchAddToDB(List<Message> messageList) async {
+  Future batchAddToDB({required List<Message> messageList, bool replace = true}) async {
     Database db = await instance.database;
-    await messages.batchAddToDB(db, messageList);
+    await messages.batchAddToDB(db: db, msgList: messageList, replace: replace);
   }
 
   Future<Message?> queryOne(int id) async {
@@ -252,6 +252,68 @@ class MessageDB {
       start: start,
       end: end,
     );
+  }
+
+  Future<List<Message>> advancedSearch({
+    required String topicSearchTerm,  
+    required String speakerSearchTerm,
+    bool onlyUnplayed = false, 
+    bool mustContainAll = true, 
+    int? start, 
+    int? end,
+    String? language,
+    String? location,
+    int? minLengthInMinutes,
+    int? maxLengthInMinutes,
+    bool onlyFavorites = false,
+    bool onlyDownloaded = false}) async {
+      Database db = await instance.database;
+      return await search.advancedSearch(
+        db: db, 
+        topicSearchTerm: topicSearchTerm, 
+        speakerSearchTerm: speakerSearchTerm,
+        onlyUnplayed: onlyUnplayed,
+        mustContainAll: mustContainAll,
+        start: start,
+        end: end,
+        language: language,
+        location: location,
+        minLengthInMinutes: minLengthInMinutes,
+        maxLengthInMinutes: maxLengthInMinutes,
+        onlyFavorites: onlyFavorites,
+        onlyDownloaded: onlyDownloaded
+        );
+  }
+
+  Future<int> advancedSearchCount({
+    required String topicSearchTerm,  
+    required String speakerSearchTerm,
+    bool onlyUnplayed = false, 
+    bool mustContainAll = true, 
+    int? start, 
+    int? end,
+    String? language,
+    String? location,
+    int? minLengthInMinutes,
+    int? maxLengthInMinutes,
+    bool onlyFavorites = false,
+    bool onlyDownloaded = false}) async {
+      Database db = await instance.database;
+      return await search.advancedSearchCount(
+        db: db, 
+        topicSearchTerm: topicSearchTerm, 
+        speakerSearchTerm: speakerSearchTerm,
+        onlyUnplayed: onlyUnplayed,
+        mustContainAll: mustContainAll,
+        start: start,
+        end: end,
+        language: language,
+        location: location,
+        minLengthInMinutes: minLengthInMinutes,
+        maxLengthInMinutes: maxLengthInMinutes,
+        onlyFavorites: onlyFavorites,
+        onlyDownloaded: onlyDownloaded
+        );
   }
 
   // PLAYLISTS

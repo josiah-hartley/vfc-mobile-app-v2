@@ -211,7 +211,7 @@ Future<int> reorderMessageInPlaylist({Database? db, Playlist? playlist, Message?
 }
 
 Future<void> reorderAllMessagesInPlaylist(Database db, Playlist playlist, List<Message?>? messages) async {
-  if (messages == null || messages.length < 1) {
+  if (messages == null) {
     print('null message list passed to playlists.reorderAllMessagesInPlaylist()');
     return;
   }

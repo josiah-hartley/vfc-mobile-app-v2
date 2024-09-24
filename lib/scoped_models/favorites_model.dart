@@ -202,7 +202,7 @@ mixin FavoritesModel on Model {
       }
       //await db.update(messages[i]);
     }
-    await db.batchAddToDB(messages);
+    await db.batchAddToDB(messageList: messages);
     //await loadFavorites();
   }
 }

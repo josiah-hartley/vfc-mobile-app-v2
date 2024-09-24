@@ -70,6 +70,15 @@ mixin RecommendationsModel on Model {
     );
   }
 
+  Future<void> updateRecentlyDownloaded() async {
+    Recommendation _downloads = await recentlyDownloaded();
+    int _recIndexForDownloads = _recommendations.indexWhere((r) => r.type == 'downloads');
+    if (_recIndexForDownloads > -1) {
+      _recommendations[_recIndexForDownloads] = _downloads;
+    }
+    notifyListeners();
+  }
+
   Future<void> updateRecommendations({List<Message?>? messages, bool subtract = false}) async {
     await db.updateRecommendationsBasedOnMessages(messages: messages, subtract: subtract);
   }

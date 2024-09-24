@@ -7,8 +7,8 @@ import 'package:voices_for_christ/widgets/message_display/message_card.dart';
 import 'package:voices_for_christ/widgets/message_display/multiselect_display.dart';
 
 class SearchResultsDisplay extends StatefulWidget {
-  SearchResultsDisplay({Key? key, this.hasSearched, required this.searchResults, required this.fullSearchCount, required this.batchSize, required this.loadMoreResults, required this.reachedEndOfList}) : super(key: key);
-  final bool? hasSearched;
+  SearchResultsDisplay({Key? key, required this.searchResults, required this.fullSearchCount, required this.batchSize, required this.loadMoreResults, required this.reachedEndOfList}) : super(key: key);
+  //final bool? hasSearched;
   final List<Message> searchResults;
   final int fullSearchCount;
   final int batchSize;
@@ -46,23 +46,23 @@ class _SearchResultsDisplayState extends State<SearchResultsDisplay> {
     if ((widget.searchResults.length) < 1) {
       _deselectAll();
     }
-    if (widget.hasSearched != true) {
+    /*if (widget.hasSearched != true) {
       return Container();
-    }
+    }*/
     return Expanded(
       child: Container(
           child: Column(
             children: [
               _selectedMessages.length > 0
                 ? Container(
-                  padding: EdgeInsets.only(top: 10.0),
+                  padding: EdgeInsets.only(top: 0.0),
                   child: MultiSelectDisplay(
                     selectedMessages: _selectedMessages,
                     onDeselectAll: _deselectAll,
                   ),
                 )
                 : Container(
-                  padding: EdgeInsets.only(top: 26.0, bottom: 26.0, left: 20.0, right: 20.0),
+                  padding: EdgeInsets.only(top: 8.0, bottom: 10.0, left: 20.0, right: 20.0),
                   /*decoration: BoxDecoration(
                     border: Border(bottom: BorderSide(color: Theme.of(context).hintColor)),
                   ),*/

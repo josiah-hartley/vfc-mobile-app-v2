@@ -72,13 +72,25 @@ class Message {
       map['tags'].forEach((tag) => taglist += tag['display'] + ',');
     }
     
-    if (taglist.length > 0) {
+    if (taglist.length > 0) { // remove trailing comma from last step
       taglist = taglist.substring(0, taglist.length - 1);
     }
 
     // get possibly null data
     durationinseconds = map['durationinseconds'] ?? 0.0;
-    approximateminutes = map['approximateminutes'] ?? 0;
+    //approximateminutes = map['approximateminutes'] ?? 0;
+    if (map['duration'] == null) {
+      approximateminutes = 0;
+    } else { // expect duration to be of the form hh:mm:ss
+      List<String> durationComponents = map['duration'].split(':');
+      if (durationComponents.length < 3) {
+        approximateminutes = 0;
+      } else {
+        int hours = int.parse(durationComponents[0]);
+        int minutes = int.parse(durationComponents[1]);
+        approximateminutes = 60*hours + minutes;
+      }
+    }
     lastplayedposition = map['lastplayedposition'] ?? 0.0;
     lastplayeddate = map['lastplayeddate'] ?? 0;
     iscurrentlydownloading = map['iscurrentlydownloading'] ?? 0;

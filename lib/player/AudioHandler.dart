@@ -50,6 +50,12 @@ class VFCAudioHandler extends BaseAudioHandler {
     }
     await broadcastQueueChanges(indexToSeekTo: indexInPlayableQueue);
   }
+
+  Future<void> clearQueue() async {
+    _queue = [];
+    broadcastQueueChanges();
+  }
+
   Future<void> broadcastQueueChanges({Duration? positionToSeekTo, int? indexToSeekTo}) async {
     queue.add(_queue);
     int currentIndex = _player.currentIndex ?? 0;
@@ -122,6 +128,10 @@ class VFCAudioHandler extends BaseAudioHandler {
   stop() async {
     await _player.stop();
     await super.stop();
+  }
+  dispose() async {
+    await _player.stop();
+    //mediaItem.value = null;
   }
   setSpeed(double speed) {
     return _player.setSpeed(speed);

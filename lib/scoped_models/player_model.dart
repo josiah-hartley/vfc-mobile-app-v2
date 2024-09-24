@@ -375,10 +375,12 @@ mixin PlayerModel on Model {
   }
 
   void disposePlayer() async {
-    _audioHandler?.stop();
     _playerVisible = false;
     _queue = [];
     _queueIndex = null;
+    await _audioHandler?.dispose();
+    await _audioHandler?.clearQueue();
+    _currentlyPlayingMessage = null;
     notifyListeners();
     Logger.logEvent(event: 'Disposing of player; updating queue in database: $_queue');
     await db.reorderAllMessagesInPlaylist(

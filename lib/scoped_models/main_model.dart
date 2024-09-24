@@ -100,7 +100,7 @@ RecommendationsModel {
       updateDownloadedMessage(messages[i]);
       updateFavoritedMessage(messages[i]);
     }
-    await db.batchAddToDB(messages);
+    await db.batchAddToDB(messageList: messages);
   }
 
   Future<void> toggleFavorite(Message? message) async {
@@ -135,6 +135,7 @@ RecommendationsModel {
       updateFavoritedMessage(message);
       updateMessageInCurrentPlaylist(message);
     }
+    updateRecentlyDownloaded();
     /*for (int i = 0; i < messages.length; i++) {
       // if it's in the queue, remove it
       int index = queue.indexWhere((m) => m.id == messages[i].id);
