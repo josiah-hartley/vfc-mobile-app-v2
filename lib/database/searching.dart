@@ -1,31 +1,8 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:voices_for_christ/data_models/message_class.dart';
 import 'package:voices_for_christ/database/table_names.dart';
-
-bool searchTermInQuotes(String searchTerm) {
-  if (searchTerm.length < 1) {
-    return false;
-  }
-  if ((searchTerm[0] == '"' || searchTerm[0] == "'") 
-        && (searchTerm[searchTerm.length - 1] == '"' || searchTerm[searchTerm.length - 1] == "'")) {
-    return true;
-  }
-  return false;
-}
-
-List<String> searchArguments(String searchTerm) {
-  //List<String> searchWords = searchTerm.split(' ').where((w) => w.length > 1).toList();
-  List<String> searchWords = [];
-  if (searchTerm.length < 1) {
-    return searchWords;
-  }
-  if (searchTermInQuotes(searchTerm)) {
-    searchWords = [searchTerm.replaceAll('"', '').replaceAll("'", '')];
-  } else {
-    searchWords = searchTerm.split(' ').where((w) => w.length >= 1).toList();
-  }
-  return (searchWords.map((w) => '%' + w + '%')).toList();
-}
+import 'package:voices_for_christ/helpers/search_terms_cleanup.dart';
+import 'package:voices_for_christ/helpers/replacements.dart' as replacements;
 
 String queryWhere(String? searchArg, List<String> comparisons) {
   if (searchArg == null || searchArg == '' || comparisons.length < 1) {
@@ -41,43 +18,91 @@ String queryWhere(String? searchArg, List<String> comparisons) {
 
 String columnsLike({required List<String> argList, required List<String> comparisons, required bool mustContainAll}) {
   String andor = mustContainAll ? 'AND' : 'OR';
-  String query = '(${queryWhere(argList[0], comparisons)})';
+  String query = '';
 
-  for (int i = 1; i < argList.length; i++) {
-    query += ' $andor (' + queryWhere(argList[i], comparisons) + ')';
+  print('ARGLIST IS $argList');
+
+  // allow for variations in speaker name
+  if (comparisons.length == 1 && comparisons[0] == 'speaker') {
+    String key = argList[0]
+            .replaceAll('%', '')
+            .toLowerCase();
+    query = '((speaker LIKE ?)';
+    List<String> variations = replacements.variations(key);
+    print('VARIATIONS IS $variations');
+    // TODO: fix this with % symbol
+    variations.forEach((v) => query += ' OR (speaker LIKE ?)');
+    query += ')';
+
+    for (int i = 1; i < argList.length; i++) {
+      key = argList[i]
+            .replaceAll('%', '')
+            .toLowerCase();
+      print('HERE, THE KEY IS $key');
+      query += ' $andor ((speaker LIKE ?)';
+      variations = replacements.variations(key);
+      variations.forEach((v) => query += ' OR (speaker LIKE ?)');
+      query += ')';
+    }
+
+    /*List<String> variations = replacements[argList[0]] ?? [];
+    variations.add(argList[0]);
+    query = '(${queryWhere(variations, comparisons)})';
+    for (int i = 1; i < argList.length; i++) {
+      query += ' $andor (' + queryWhere(argList[i], comparisons) + ')';
+    }*/
+  } else {
+    query = '(${queryWhere(argList[0], comparisons)})';
+    for (int i = 1; i < argList.length; i++) {
+      query += ' $andor (' + queryWhere(argList[i], comparisons) + ')';
+    }
   }
+
+  /*for (int i = 1; i < argList.length; i++) {
+    query += ' $andor (' + queryWhere(argList[i], comparisons) + ')';
+  }*/
 
   return query;
 }
 
-Future<List<Message>> queryArgList({required Database db, required String table, required String searchTerm, List<String>? comparisons, bool? onlyUnplayed, bool mustContainAll = true, int? start, int? end}) async {
+Future<List<Message>> searchByColumns({required Database db, required String searchTerm, List<String>? columns, bool? onlyUnplayed, required bool mustContainAll, int? start, int? end}) async {
+  /*return queryArgList(
+    db: db,
+    table: messageTable,
+    searchTerm: searchTerm,
+    comparisons: columns,
+    onlyUnplayed: onlyUnplayed ?? false,
+    mustContainAll: mustContainAll,
+    start: start,
+    end: end,
+  );*/
   List<String> argList = searchArguments(searchTerm);
 
-  if (argList.length < 1 || comparisons == null || comparisons.length < 1) {
+  if (argList.length < 1 || columns == null || columns.length < 1) {
     return [];
   }
 
-  String query = 'SELECT * from $table WHERE (';
+  String query = 'SELECT * from $messageTable WHERE (';
   List<String> args = [];
   
   query += columnsLike(
     argList: argList,
-    comparisons: comparisons,
+    comparisons: columns,
     mustContainAll: true,
   );
   for (int i = 0; i < argList.length; i++) {
-    args.addAll(List.filled(comparisons.length, argList[i]));
+    args.addAll(List.filled(columns.length, argList[i]));
   }
   query += ')';
 
   if (mustContainAll == false) {
     query += ' OR (' + columnsLike(
       argList: argList,
-      comparisons: comparisons,
+      comparisons: columns,
       mustContainAll: false,
     );
     for (int i = 0; i < argList.length; i++) {
-      args.addAll(List.filled(comparisons.length, argList[i]));
+      args.addAll(List.filled(columns.length, argList[i]));
     }
     query += ')';
   }
@@ -102,87 +127,6 @@ Future<List<Message>> queryArgList({required Database db, required String table,
     print('Error searching SQLite database: $error');
     return [];
   }
-}
-
-Future<int> queryCountArgList ({required Database db, required String table, required String searchTerm, List<String>? comparisons, bool onlyUnplayed = false, bool mustContainAll = true}) async {
-  List<String> argList = searchArguments(searchTerm);
-
-  if (argList.length < 1 || comparisons == null || comparisons.length < 1) {
-    return 0;
-  }
-
-  String query = 'SELECT COUNT(*) from $table WHERE (';
-  List<String> args = [];
-  
-  query += columnsLike(
-    argList: argList,
-    comparisons: comparisons,
-    mustContainAll: true,
-  );
-  for (int i = 0; i < argList.length; i++) {
-    args.addAll(List.filled(comparisons.length, argList[i]));
-  }
-  query += ')';
-
-  if (mustContainAll == false) {
-    query += ' OR (' + columnsLike(
-      argList: argList,
-      comparisons: comparisons,
-      mustContainAll: false,
-    );
-    for (int i = 0; i < argList.length; i++) {
-      args.addAll(List.filled(comparisons.length, argList[i]));
-    }
-    query += ')';
-  }
-
-  if (onlyUnplayed) {
-     query += ' AND isplayed = 0';
-  }
-  
-  try {
-    return Sqflite.firstIntValue(await db.rawQuery(query, args)) ?? 0;
-  } catch (error) {
-    print('Error searching SQLite database: $error');
-    return 0;
-  }
-}
-
-Future<int> searchCountSpeakerTitle({required Database db, required String searchTerm, required bool mustContainAll}) async {
-  List<String> comparisons = ['speaker', 'title', 'taglist'];
-  return queryCountArgList(
-    db: db,
-    table: messageTable,
-    searchTerm: searchTerm,
-    comparisons: comparisons,
-    mustContainAll: mustContainAll,
-  );
-}
-
-Future<List<Message>> searchBySpeakerOrTitle({required Database db, required String searchTerm, required bool mustContainAll, int? start, int? end}) async {
-  List<String> comparisons = ['speaker', 'title', 'taglist'];
-  return queryArgList(
-    db: db,
-    table: messageTable,
-    searchTerm: searchTerm,
-    comparisons: comparisons,
-    mustContainAll: mustContainAll,
-    start: start,
-    end: end,
-  );
-}
-
-Future<List<Message>> searchByColumns({required Database db, required String searchTerm, List<String>? columns, bool? onlyUnplayed, required bool mustContainAll, int? start, int? end}) async {
-  return queryArgList(
-    db: db,
-    table: messageTable,
-    searchTerm: searchTerm,
-    comparisons: columns,
-    onlyUnplayed: onlyUnplayed ?? false,
-    mustContainAll: mustContainAll,
-    start: start,
-    end: end,
-  );
 }
 
 String getAdvancedSearchQuery({
@@ -299,8 +243,23 @@ Future<List<Message>> advancedSearch({
       onlyDownloaded: onlyDownloaded);
 
     List<String> args = topicSearchWords;
+
+    // add variations to speaker names ('Mike' for 'Michael', e.g.)
+    for (int i = 0; i < speakerSearchWords.length; i++) {
+      String key = speakerSearchWords[i]
+            .replaceAll('%', '')
+            .toLowerCase();
+      List<String> variations = replacements.variations(key)
+        .map((v) => '%$v%').toList();
+      if (variations.length > 0) {
+        speakerSearchWords.insertAll(i + 1, variations);
+        i += variations.length;
+      }
+    }
+
     args.addAll(speakerSearchWords);
-    print('query is ${query} and args are ${args}');
+
+    print('query is ${query} and args are ${args}; arg length is ${args.length}');
 
     try {
       var result = await db.rawQuery(query, args);
@@ -360,8 +319,23 @@ Future<int> advancedSearchCount({
       onlyDownloaded: onlyDownloaded);
 
     List<String> args = topicSearchWords;
+
+    // add variations to speaker names ('Mike' for 'Michael', e.g.)
+    for (int i = 0; i < speakerSearchWords.length; i++) {
+      String key = speakerSearchWords[i]
+            .replaceAll('%', '')
+            .toLowerCase();
+      List<String> variations = replacements.variations(key)
+        .map((v) => '%$v%').toList();
+      if (variations.length > 0) {
+        speakerSearchWords.insertAll(i + 1, variations);
+        i += variations.length;
+      }
+    }
+
     args.addAll(speakerSearchWords);
-    print('query is ${query} and args are ${args}');
+    
+    print('COUNT query is ${query} and args are ${args}');
 
     try {
       return Sqflite.firstIntValue(await db.rawQuery(query, args)) ?? 0;
@@ -370,6 +344,128 @@ Future<int> advancedSearchCount({
       return 0;
     }
 }
+
+/*Future<List<Message>> queryArgList({required Database db, required String table, required String searchTerm, List<String>? comparisons, bool? onlyUnplayed, bool mustContainAll = true, int? start, int? end}) async {
+  List<String> argList = searchArguments(searchTerm);
+
+  if (argList.length < 1 || comparisons == null || comparisons.length < 1) {
+    return [];
+  }
+
+  String query = 'SELECT * from $table WHERE (';
+  List<String> args = [];
+  
+  query += columnsLike(
+    argList: argList,
+    comparisons: comparisons,
+    mustContainAll: true,
+  );
+  for (int i = 0; i < argList.length; i++) {
+    args.addAll(List.filled(comparisons.length, argList[i]));
+  }
+  query += ')';
+
+  if (mustContainAll == false) {
+    query += ' OR (' + columnsLike(
+      argList: argList,
+      comparisons: comparisons,
+      mustContainAll: false,
+    );
+    for (int i = 0; i < argList.length; i++) {
+      args.addAll(List.filled(comparisons.length, argList[i]));
+    }
+    query += ')';
+  }
+
+  if (onlyUnplayed == true) {
+     query += ' AND isplayed = 0';
+  }
+
+  if (start != null && end != null) {
+    query += ' LIMIT ${(end - start).toString()} OFFSET ${start.toString()}';
+  }
+  
+  try {
+    var result = await db.rawQuery(query, args);
+
+    if (result.isNotEmpty) {
+      List<Message> messages = result.map((msgMap) => Message.fromMap(msgMap)).toList();
+      return messages;
+    }
+    return [];
+  } catch (error) {
+    print('Error searching SQLite database: $error');
+    return [];
+  }
+}*/
+
+/*Future<int> queryCountArgList ({required Database db, required String table, required String searchTerm, List<String>? comparisons, bool onlyUnplayed = false, bool mustContainAll = true}) async {
+  List<String> argList = searchArguments(searchTerm);
+
+  if (argList.length < 1 || comparisons == null || comparisons.length < 1) {
+    return 0;
+  }
+
+  String query = 'SELECT COUNT(*) from $table WHERE (';
+  List<String> args = [];
+  
+  query += columnsLike(
+    argList: argList,
+    comparisons: comparisons,
+    mustContainAll: true,
+  );
+  for (int i = 0; i < argList.length; i++) {
+    args.addAll(List.filled(comparisons.length, argList[i]));
+  }
+  query += ')';
+
+  if (mustContainAll == false) {
+    query += ' OR (' + columnsLike(
+      argList: argList,
+      comparisons: comparisons,
+      mustContainAll: false,
+    );
+    for (int i = 0; i < argList.length; i++) {
+      args.addAll(List.filled(comparisons.length, argList[i]));
+    }
+    query += ')';
+  }
+
+  if (onlyUnplayed) {
+     query += ' AND isplayed = 0';
+  }
+  
+  try {
+    return Sqflite.firstIntValue(await db.rawQuery(query, args)) ?? 0;
+  } catch (error) {
+    print('Error searching SQLite database: $error');
+    return 0;
+  }
+}*/
+
+/*Future<int> searchCountSpeakerTitle({required Database db, required String searchTerm, required bool mustContainAll}) async {
+  List<String> comparisons = ['speaker', 'title', 'taglist'];
+  return queryCountArgList(
+    db: db,
+    table: messageTable,
+    searchTerm: searchTerm,
+    comparisons: comparisons,
+    mustContainAll: mustContainAll,
+  );
+}*/
+
+/*Future<List<Message>> searchBySpeakerOrTitle({required Database db, required String searchTerm, required bool mustContainAll, int? start, int? end}) async {
+  List<String> comparisons = ['speaker', 'title', 'taglist'];
+  return queryArgList(
+    db: db,
+    table: messageTable,
+    searchTerm: searchTerm,
+    comparisons: comparisons,
+    mustContainAll: mustContainAll,
+    start: start,
+    end: end,
+  );
+}*/
 
 /*Future<List<Message>> searchBySpeaker(String searchTerm, [int start, int end]) async {
   Database db = await instance.database;

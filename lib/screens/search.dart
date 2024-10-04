@@ -115,8 +115,8 @@ class _SearchWindowState extends State<SearchWindow> {
             children: [
               Container(
                 child: IconButton(
-                  icon: Icon(CupertinoIcons.back),
-                  iconSize: 34.0,
+                  icon: Icon(CupertinoIcons.xmark),
+                  iconSize: 22.0,
                   color: Theme.of(context).hintColor,
                   onPressed: closeWindow,
                 ),
@@ -202,8 +202,8 @@ class _SearchWindowState extends State<SearchWindow> {
 
   void _clearSearch() {
     setState(() {
-      _searchControllerTopic.text = '';
-      _searchControllerSpeaker.text = '';
+      //_searchControllerTopic.text = '';
+      //_searchControllerSpeaker.text = '';
       _minLengthTextController.text = '';
       _maxLengthTextController.text = '';
       _hasSearched = false;

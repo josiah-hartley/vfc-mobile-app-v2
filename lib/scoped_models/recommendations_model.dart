@@ -1,3 +1,5 @@
+import 'package:html/parser.dart' as html_parser;
+import 'package:http/http.dart' as http;
 import 'package:scoped_model/scoped_model.dart';
 import 'package:voices_for_christ/data_models/message_class.dart';
 import 'package:voices_for_christ/data_models/recommendation_class.dart';
@@ -8,8 +10,10 @@ import 'package:voices_for_christ/helpers/logger.dart' as Logger;
 mixin RecommendationsModel on Model {
   final db = MessageDB.instance;
   List<Recommendation> _recommendations = [];
+  Message? _messageOfTheMonth;
 
   List<Recommendation> get recommendations => _recommendations;
+  Message? get messageOfTheMonth => _messageOfTheMonth;
 
   Future<void> loadRecommendations() async {
     Logger.logEvent(event: 'Starting to load recommendations');
@@ -81,5 +85,19 @@ mixin RecommendationsModel on Model {
 
   Future<void> updateRecommendations({List<Message?>? messages, bool subtract = false}) async {
     await db.updateRecommendationsBasedOnMessages(messages: messages, subtract: subtract);
+  }
+
+  Future<void> getMOTM() async {
+    try {
+      final response = await http.get(Uri.parse('https://www.vfc.io'));
+      final document = html_parser.parse(response.body);
+      final motm_div = document.getElementById('motm');
+      final motm_link = motm_div?.getElementsByTagName('a')[0];
+      String? link = motm_link?.attributes['href'];
+      String? motm_id = link?.split('/')[2].split('?')[0];
+      // TODO: come back to this
+    } catch (e) {
+      Logger.logEvent(type: 'error', event: 'Failed to load Message of the Month from vfc.io: $e');
+    }
   }
 }

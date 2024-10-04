@@ -56,6 +56,7 @@ class _MyAppState extends State<MyApp> {
     await mainModel?.loadSettings();
     updateLoadingMessage('Loading recommendations...');
     await mainModel?.loadRecommendations();
+    await mainModel?.getMOTM();
     
     // moved here to try to fix freezing bug
     updateLoadingMessage('Configuring audio session...');

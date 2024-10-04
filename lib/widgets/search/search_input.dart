@@ -111,7 +111,7 @@ Widget _searchInputBody({
             ),
             condensed == true 
             ? Container(
-              child: _smallButton(context: context, onTap: onReset, icon: CupertinoIcons.refresh_bold),
+              child: _smallButton(context: context, onTap: onReset, icon: CupertinoIcons.arrow_left),
             )
             : Container(),
           ],

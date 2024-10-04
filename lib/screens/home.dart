@@ -41,6 +41,8 @@ class HomePage extends StatelessWidget {
                               color: Theme.of(context).hintColor,
                             ),
                             onPressed: () {
+                              // TODO: get rid of this MOTM call (just here for testing)
+                              model.getMOTM();
                               showDialog(
                                 context: context, 
                                 builder: (context) => AlertDialog(
@@ -83,7 +85,7 @@ class HomePage extends StatelessWidget {
       return Container();
     }
     return Container(
-      height: 255.0,
+      height: 235.0,
       padding: EdgeInsets.only(top: 30.0, bottom: 30.0, left: 14.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,6 +99,7 @@ class HomePage extends StatelessWidget {
             ),
           ),
           Expanded(
+          //Container(
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               shrinkWrap: true,
@@ -172,25 +175,35 @@ class HomePage extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 0.0),
-            child: Text(speakerReversedName(message.speaker), 
-              style: Theme.of(context).primaryTextTheme.headlineMedium?.copyWith(fontSize: 18.0),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          Container(
-            alignment: Alignment.centerRight,
-            child: Text(message.durationinseconds == 0.0
-              ? message.approximateminutes == 0
-                ? ''
-                : '${message.approximateminutes} min'
-              : messageDurationInMinutes(message.durationinseconds), 
-              style: Theme.of(context).primaryTextTheme.headlineMedium?.copyWith(fontSize: 18.0),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 0.0),
+                    child: Text(speakerReversedName(message.speaker), 
+                      style: Theme.of(context).primaryTextTheme.headlineMedium?.copyWith(
+                        fontSize: 18.0, 
+                        fontWeight: FontWeight.w800,
+                        color: Theme.of(context).hintColor.withOpacity(0.7),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                ),
+              ),
+              Container(
+                alignment: Alignment.centerRight,
+                child: Text(message.durationinseconds == 0.0
+                  ? message.approximateminutes == 0
+                    ? ''
+                    : '${message.approximateminutes} min'
+                  : messageDurationInMinutes(message.durationinseconds), 
+                  style: Theme.of(context).primaryTextTheme.headlineMedium?.copyWith(fontSize: 14.0, fontStyle: FontStyle.italic),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
         ],
       ),

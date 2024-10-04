@@ -38,7 +38,7 @@ ThemeData lightTheme = sharedTheme.copyWith(
     headlineMedium: TextStyle(
       color: darkBlue,
       fontSize: 14.0,
-      fontWeight: FontWeight.w400,
+      fontWeight: FontWeight.w700,
     ),
   ),
   textTheme: TextTheme(
