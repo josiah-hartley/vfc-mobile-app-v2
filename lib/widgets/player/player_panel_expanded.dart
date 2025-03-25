@@ -66,6 +66,7 @@ class _PlayerPanelExpandedState extends State<PlayerPanelExpanded> {
               _slider(
                 duration: model.duration,
                 currentPositionStream: model.currentPositionStream,
+                initialPosition: model.currentPosition,
                 updatePosition: model.seekToSecond,
               ),
               Expanded(
@@ -160,9 +161,10 @@ class _PlayerPanelExpandedState extends State<PlayerPanelExpanded> {
     );
   }
 
-  Widget _slider({Stream<Duration>? currentPositionStream, required Duration duration, required Function updatePosition}) {
+  Widget _slider({Stream<Duration>? currentPositionStream, Duration? initialPosition, required Duration duration, required Function updatePosition}) {
     return StreamBuilder(
       stream: currentPositionStream,
+      initialData: initialPosition,
       builder: (BuildContext context, AsyncSnapshot<Duration> snapshot) {
         Duration position = snapshot.data ?? Duration(seconds: 0);
         return SeekBar(

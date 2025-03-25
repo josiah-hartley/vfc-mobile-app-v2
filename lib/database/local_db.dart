@@ -13,7 +13,6 @@ import 'package:voices_for_christ/database/metadata.dart' as meta;
 import 'package:voices_for_christ/database/messages.dart' as messages;
 import 'package:voices_for_christ/database/favorites.dart' as favorites;
 import 'package:voices_for_christ/database/downloads.dart' as downloadsMethods;
-import 'package:voices_for_christ/database/speakers.dart' as speakers;
 import 'package:voices_for_christ/database/searching.dart' as search;
 import 'package:voices_for_christ/database/playlists.dart' as playlists;
 import 'package:voices_for_christ/database/recommendations.dart' as recommendations;
@@ -211,26 +210,17 @@ class MessageDB {
     await downloadsMethods.removeMessagesFromDownloadQueueDB(db, messages);
   }
 
-  // SPEAKERS
-  Future<int> getSpeakerMessageCount({String speakerName = ''}) async {
-    Database db = await instance.database;
-    return await speakers.getSpeakerMessageCount(
-      db: db,
-      speakerName: speakerName,
-    );
-  }
-
   // SEARCHING
-  Future<int> searchCountSpeakerTitle({String searchTerm = '', bool mustContainAll = true}) async {
+  /*Future<int> searchCountSpeakerTitle({String searchTerm = '', bool mustContainAll = true}) async {
     Database db = await instance.database;
     return await search.searchCountSpeakerTitle(
       db: db, 
       searchTerm: searchTerm,
       mustContainAll: mustContainAll,
     );
-  }
+  }*/
 
-  Future<List<Message>> searchBySpeakerOrTitle({String searchTerm = '', bool mustContainAll = true, int? start, int? end}) async {
+  /*Future<List<Message>> searchBySpeakerOrTitle({String searchTerm = '', bool mustContainAll = true, int? start, int? end}) async {
     Database db = await instance.database;
     return await search.searchBySpeakerOrTitle(
       db: db, 
@@ -239,7 +229,7 @@ class MessageDB {
       start: start,
       end: end,
     );
-  }
+  }*/
 
   Future<List<Message>> searchByColumns({String searchTerm = '', List<String>? columns, bool? onlyUnplayed, bool mustContainAll = true, int? start, int? end}) async {
     Database db = await instance.database;

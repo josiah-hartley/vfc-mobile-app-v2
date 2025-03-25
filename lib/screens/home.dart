@@ -11,7 +11,8 @@ import 'package:voices_for_christ/widgets/dialogs/message_actions_dialog.dart';
 import 'package:voices_for_christ/helpers/constants.dart' as Constants;
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key, this.debugMessage}) : super(key: key);
+  final String? debugMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -28,39 +29,62 @@ class HomePage extends StatelessWidget {
                 if (index == 0) {
                   return Container(
                     padding: EdgeInsets.only(top: 12.0, left: 14.0),
-                    child: Row(
+                    child: Column(
                       children: [
-                        Expanded(
-                          child: Text('Recommendations',
-                            style: Theme.of(context).primaryTextTheme.displayLarge,
-                          )
-                        ),
-                        Container(
-                          child: IconButton(
-                            icon: Icon(CupertinoIcons.question_circle,
-                              color: Theme.of(context).hintColor,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text('Recommendations',
+                                style: Theme.of(context).primaryTextTheme.displayLarge,
+                              )
                             ),
-                            onPressed: () {
-                              // TODO: get rid of this MOTM call (just here for testing)
-                              model.getMOTM();
-                              showDialog(
-                                context: context, 
-                                builder: (context) => AlertDialog(
-                                  title: Container(
-                                    child: Text('Recommendations',
-                                      style: TextStyle(color: Theme.of(context).hintColor),
+                            Container(
+                              child: IconButton(
+                                icon: Icon(CupertinoIcons.question_circle,
+                                  color: Theme.of(context).hintColor,
+                                ),
+                                onPressed: () {
+                                  showDialog(
+                                    context: context, 
+                                    builder: (context) => AlertDialog(
+                                      title: Container(
+                                        child: Text('Recommendations',
+                                          style: TextStyle(color: Theme.of(context).hintColor),
+                                        ),
+                                      ),
+                                      content: Container(
+                                        child: Text('At first, the recommended messages on the home page come from pre-selected categories.  Over time, these recommendations will update based on speakers and topics related to messages that you download and favorite.',
+                                          style: TextStyle(color: Theme.of(context).hintColor),
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                  content: Container(
-                                    child: Text('At first, the recommended messages on the home page come from pre-selected categories.  Over time, these recommendations will update based on speakers and topics related to messages that you download and favorite.',
-                                      style: TextStyle(color: Theme.of(context).hintColor),
-                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        debugMessage == ''
+                          ? Container()
+                          : Container(
+                            child: Row(
+                              children: [
+                                Container(
+                                  child: Text(debugMessage ?? '',
+                                    style: TextStyle(color: Theme.of(context).hintColor),
                                   ),
                                 ),
-                              );
-                            },
+                                Expanded(
+                                  child: TextButton(
+                                    child: Text('Reset'),
+                                    onPressed: () {
+                                      model.resetLastCloudCheckedDateInDB();
+                                    },
+                                  )
+                                ),
+                              ]
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   );
@@ -94,7 +118,7 @@ class HomePage extends StatelessWidget {
           Container(
             padding: EdgeInsets.only(bottom: 10.0),
             child: Text(recommendation.getHeader(), 
-              style: Theme.of(context).primaryTextTheme.displayMedium?.copyWith(fontWeight: FontWeight.w300, fontSize: 24.0),
+              style: Theme.of(context).primaryTextTheme.displayMedium?.copyWith(fontWeight: FontWeight.w300, fontSize: 20.0),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -140,8 +164,8 @@ class HomePage extends StatelessWidget {
                 end: Alignment.bottomCenter,
               ),*/
               border: Border.all(
-                color: Theme.of(context).hintColor.withOpacity(0.3),
-                width: 2,
+                color: Theme.of(context).hintColor.withOpacity(0.1),
+                width: 1,
               ),
               color: Theme.of(context).hintColor.withOpacity(0.05),//Theme.of(context).hintColor.withOpacity(0.05),
             ),

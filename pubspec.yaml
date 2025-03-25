@@ -2,7 +2,7 @@ name: voices_for_christ
 description: "A mobile app for listening to messages on Voices for Christ"
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.1.0+24
+version: 1.1.2+26
 
 environment:
   sdk: '>=3.4.3 <4.0.0'

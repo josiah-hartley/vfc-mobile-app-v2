@@ -44,7 +44,7 @@ class _SearchWindowState extends State<SearchWindow> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: 12.0),
+      padding: EdgeInsets.only(top: 24.0),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,

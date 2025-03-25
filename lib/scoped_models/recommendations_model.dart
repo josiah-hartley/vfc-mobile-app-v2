@@ -87,7 +87,7 @@ mixin RecommendationsModel on Model {
     await db.updateRecommendationsBasedOnMessages(messages: messages, subtract: subtract);
   }
 
-  Future<void> getMOTM() async {
+  /*Future<void> getMOTM() async {
     try {
       final response = await http.get(Uri.parse('https://www.vfc.io'));
       final document = html_parser.parse(response.body);
@@ -99,5 +99,5 @@ mixin RecommendationsModel on Model {
     } catch (e) {
       Logger.logEvent(type: 'error', event: 'Failed to load Message of the Month from vfc.io: $e');
     }
-  }
+  }*/
 }

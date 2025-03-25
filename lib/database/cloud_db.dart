@@ -7,7 +7,7 @@ import 'package:voices_for_christ/data_models/message_class.dart';
 import 'package:voices_for_christ/database/local_db.dart';
 import 'package:voices_for_christ/helpers/logger.dart' as Logger;
 
-Future getMessageDataFromCloud({Function? onCompleted}) async {
+Future<int> getMessageDataFromCloud({Function? onCompleted}) async {
   // see when database was last updated
   final dio = Dio();
   final db = MessageDB.instance;
@@ -24,7 +24,7 @@ Future getMessageDataFromCloud({Function? onCompleted}) async {
   if (startTime.difference(d).inDays <= staleDays) {
     print('Already checked for updates within the last ${staleDays} days');
     Logger.logEvent(event: 'Already checked for updates within the last ${staleDays} days');
-    return;
+    return 0;
   }
   // get all messages since last update
   try {
@@ -32,7 +32,7 @@ Future getMessageDataFromCloud({Function? onCompleted}) async {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> msgMap = response.data["messages"];
-      print(msgMap);
+      //print(msgMap);
       Logger.logEvent(event: 'Loaded ${msgMap.length} messages from cloud');
 
       // Add data in batches
@@ -44,7 +44,7 @@ Future getMessageDataFromCloud({Function? onCompleted}) async {
 
         msgList.add(msg);
       }
-      print(msgList);
+      //print(msgList);
       Duration loadingFromCloud = DateTime.now().difference(startTime);
       print('Loading messages from the cloud took ${loadingFromCloud.inMilliseconds} ms');
       await db.batchAddToDB(messageList: msgList, replace: true);
@@ -58,7 +58,8 @@ Future getMessageDataFromCloud({Function? onCompleted}) async {
 
       Duration duration = DateTime.now().difference(startTime);
       Logger.logEvent(event: 'Loading messages from the cloud and adding them to the database took ${duration.inMilliseconds} ms');
-      print('Loading messages from the cloud and adding them to the database took ${duration.inMilliseconds} ms');
+      print('Loading ${msgList.length} messages from the cloud and adding them to the database took ${duration.inMilliseconds} ms');
+      return duration.inMilliseconds;
     } else {
       throw HttpException('Server error: failed to load messages from AWS');
     }

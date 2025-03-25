@@ -33,6 +33,16 @@ mixin SettingsModel on Model {
     Logger.logEvent(event: 'Initializing: in loadSettings(), finished!');
   }
 
+  void manuallyUpdateLastCloudCheckedDate(int timestamp) {
+    _cloudLastCheckedDate = timestamp;
+    print('Reset last cloud checked date to ${timestamp} ms');
+    notifyListeners();
+  }
+
+  void resetLastCloudCheckedDateInDB() {
+    db.setLastUpdatedDate(0);
+  }
+
   void toggleDarkMode() async {
     _darkMode = !_darkMode;
     notifyListeners();

@@ -12,11 +12,18 @@ Future<void> batchAddToDB({required Database db, required List<Message> msgList,
   await db.transaction((txn) async {
     Batch batch = txn.batch();
 
+    int index = 0;
     for (Message msg in msgList) {
       batch.insert(messageTable, msg.toMap(), conflictAlgorithm: conflictAlgo);
+      // commit in batches of 200
+      if (index % 200 == 0) {
+        await batch.commit(noResult: true);
+        batch = txn.batch();
+      }
+      index++;
     }
 
-    await batch.commit();
+    await batch.commit(noResult: true);
   });
 }
 

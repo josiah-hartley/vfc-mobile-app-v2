@@ -15,4 +15,4 @@ const int DAYS_TO_MANUALLY_CHECK_CLOUD = 30; // only let manual updates happen o
 const int DAYS_TO_AUTOMATICALLY_CHECK_CLOUD = 30; // do automatic checks monthly
 const int LOGS_TO_KEEP_IN_DB = 100;
 const String UPDATE_MESSAGE_API_URL = 'https://u0wwbelzf6.execute-api.us-east-2.amazonaws.com/v1/';
-const String APP_VERSION = '1.1.0+24';
+const String APP_VERSION = '1.1.2+26';

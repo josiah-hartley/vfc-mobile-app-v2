@@ -17,6 +17,7 @@ class ProgressDisplayBar extends StatelessWidget {
         if (message.id == model.currentlyPlayingMessage?.id) {
           return StreamBuilder(
             stream: model.currentPositionStream,
+            initialData: model.currentPosition,
             builder: (BuildContext context, AsyncSnapshot<Duration> snapshot) {
               Duration currentPosition = snapshot.data ?? Duration(seconds: 0);
               Duration totalLength = model.duration; //?? Duration(seconds: 0);

@@ -181,10 +181,16 @@ class _AdvancedSearchOptionsState extends State<AdvancedSearchOptions> {
             context: context,
             value: _mustContainAll,
             title: 'Contains all keywords',
-            subtitle: _mustContainAll
-              ? "e.g. 'romans law' means 'romans' AND 'law'"
-              : "e.g. 'romans law' means 'romans' OR 'law' (or both)",
+            subtitle: _containsAllSubtitle(ctx: context, containsAll: _mustContainAll),
             toggle: _toggleContainAll,
+          ),
+          Container(
+            padding: EdgeInsets.only(bottom: 10.0),
+            child: Text("You can use quotation marks to search for exact matches",
+              style: Theme.of(context).primaryTextTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            )
           ),
           _lengthConstraintWidget(),
           _toggle(
@@ -212,7 +218,7 @@ class _AdvancedSearchOptionsState extends State<AdvancedSearchOptions> {
     );
   }
 
-  Widget _toggle({required BuildContext context, required bool value, String? title, String? subtitle, required Function toggle}) {
+  Widget _toggle({required BuildContext context, required bool value, String? title, Widget? subtitle, required Function toggle}) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 12.0),
       child: Row(
@@ -228,9 +234,7 @@ class _AdvancedSearchOptionsState extends State<AdvancedSearchOptions> {
                   ? SizedBox(height: 0.0)
                   : Container(
                       padding: EdgeInsets.only(top: 5.0, right: 25.0),
-                      child: Text(subtitle,
-                        style: Theme.of(context).primaryTextTheme.headlineMedium,
-                      ),
+                      child: subtitle,
                     ),
               ],
             ),
@@ -368,5 +372,53 @@ class _AdvancedSearchOptionsState extends State<AdvancedSearchOptions> {
 
   Widget _locationConstraintWidget() {
     return Container();
+  }
+
+  Widget _containsAllSubtitle({required BuildContext ctx, required bool containsAll}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: "e.g. ",
+                style: Theme.of(ctx).primaryTextTheme.headlineMedium,
+              ),
+              TextSpan(
+                text: "romans law ",
+                style: Theme.of(ctx).primaryTextTheme.headlineMedium?.copyWith(
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              TextSpan(
+                text: "means ",
+                style: Theme.of(ctx).primaryTextTheme.headlineMedium,
+              ),
+              TextSpan(
+                text: "romans ",
+                style: Theme.of(ctx).primaryTextTheme.headlineMedium?.copyWith(
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              TextSpan(
+                text: containsAll ? "AND " : "OR ",
+                style: Theme.of(ctx).primaryTextTheme.headlineMedium,
+              ),
+              TextSpan(
+                text: "law",
+                style: Theme.of(ctx).primaryTextTheme.headlineMedium?.copyWith(
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              TextSpan(
+                text: containsAll ? "" : " (or both)",
+                style: Theme.of(ctx).primaryTextTheme.headlineMedium,
+              )
+            ]
+          )
+        ),
+      ],
+    );
   }
 }

@@ -7,7 +7,6 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:voices_for_christ/helpers/minimize_keyboard.dart';
 import 'package:voices_for_christ/scoped_models/main_model.dart';
 import 'package:voices_for_christ/screens/settings.dart';
-import 'package:voices_for_christ/screens/speakers.dart';
 import 'package:voices_for_christ/widgets/player/player_panel_collapsed.dart';
 import 'package:voices_for_christ/widgets/player/player_panel_expanded.dart';
 import 'package:voices_for_christ/screens/search.dart';
@@ -17,7 +16,8 @@ import 'package:voices_for_christ/screens/playlists.dart';
 import 'package:voices_for_christ/screens/downloads.dart';
 
 class MainScaffold extends StatefulWidget {
-  MainScaffold({Key? key}) : super(key: key);
+  MainScaffold({Key? key, this.debugMessage}) : super(key: key);
+  final String? debugMessage;
 
   @override
   _MainScaffoldState createState() => _MainScaffoldState();
@@ -320,7 +320,7 @@ class _MainScaffoldState extends State<MainScaffold> {
     Widget page;
     switch (settings.name) {
       case '/':
-        page = HomePage();
+        page = HomePage(debugMessage: widget.debugMessage);
         break;
       case '/favorites':
         page = FavoritesPage();

@@ -36,12 +36,13 @@ class _MyAppState extends State<MyApp> {
   MainModel? mainModel;
   bool _loading = true;
   String _loadingMessage = '';
+  String _debugMessage = '';
 
   @override
   void initState() {
     super.initState();
     doMainSetup();
-    getMessageDataFromCloud();
+    //getMessageDataFromCloud();
   }
 
   void updateLoadingMessage(String newMessage) {
@@ -56,7 +57,19 @@ class _MyAppState extends State<MyApp> {
     await mainModel?.loadSettings();
     updateLoadingMessage('Loading recommendations...');
     await mainModel?.loadRecommendations();
-    await mainModel?.getMOTM();
+    //await mainModel?.getMOTM();
+    //updateLoadingMessage('Updating database (may take a while)...');
+    /*int milliseconds = await getMessageDataFromCloud(
+      onCompleted: () {
+        int timestamp = DateTime.now().millisecondsSinceEpoch;
+        mainModel?.manuallyUpdateLastCloudCheckedDate(timestamp);
+      }
+    );*/
+
+    // TODO: remove this debug message once it's been tested
+    /*setState(() {
+      _debugMessage = 'It took ${milliseconds} ms to update the database';
+    });*/
     
     // moved here to try to fix freezing bug
     updateLoadingMessage('Configuring audio session...');
@@ -77,6 +90,13 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _loading = false;
     });
+
+    getMessageDataFromCloud(
+      onCompleted: () {
+        int timestamp = DateTime.now().millisecondsSinceEpoch;
+        mainModel?.manuallyUpdateLastCloudCheckedDate(timestamp);
+      }
+    );
   }
 
   @override
@@ -122,7 +142,7 @@ class _MyAppState extends State<MyApp> {
         builder: (context, child, model) {
           return MaterialApp(
             title: 'Voices for Christ',
-            home: MainScaffold(),
+            home: MainScaffold(debugMessage: _debugMessage),
             theme: model.darkMode == true ? darkTheme : lightTheme,
             debugShowCheckedModeBanner: false,
           );
